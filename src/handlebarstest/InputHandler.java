@@ -27,12 +27,12 @@ public class InputHandler {
         return input.get(key);
     }
 
-    public static Map<String, String> proceed(String args[]) {
+    public static void proceed(String[] args) {
 
         // Check if valid or help requested
         if (args.length < 4 || args[0].matches("([-/]?)[hH]elp")) {
             input.put("help", getHelpMessage());
-            return input;
+            return;
         }
 
         // Fill map
@@ -74,7 +74,6 @@ public class InputHandler {
             input.put("output", filePath.substring(0, lastIndex + 1) + "output.txt");
         }
 
-        return input;
     }
 
     public static Map<String, String> getInput() {

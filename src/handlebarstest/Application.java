@@ -38,7 +38,7 @@ public class Application {
                 System.err.println("Failed to append to output file");
             }
             System.out.println(output);
-        } else {
+        } else { //Eror
             System.err.println(getOutput());
         }
     }
