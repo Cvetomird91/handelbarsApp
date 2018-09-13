@@ -7,13 +7,14 @@ import java.util.Map;
 
 public class InputHandler {
 
+    // isn't this one big constant... why is necessary to overcomplicate this?
     public static final List<String> helpMessageList = Arrays.asList(
             "Usage:",
-            "   -hbs && -json are required",
-            "Merges and compiles an hbs and json files into a new one",
+            "   -hbs && -json are required", // probably move this in another section, mandatory options or similar.
+            "Merges and compiles an hbs and json files into a new one", // this should be the first message
             "Options:",
-            "   -json(-j)      : Set the working directory",
-            "   -hbs(-h)       : set the name for both .hbs & .json files",
+            "   -json(-j)      : Set the working directory", // why -json(-j) is used for directory. error in the description?
+            "   -hbs(-h)       : set the name for both .hbs & .json files", // if it's used for both of the files then change the option's name. I guess this is an old description - it should be updated.
             "   -output(-o)    : sets the output file(default is output.txt)"
     );
     public static final String helpMessage;
@@ -27,7 +28,13 @@ public class InputHandler {
         return input.get(key);
     }
 
+
+    // this method is doing too much work. in the ideal case a method should be doing only 1 thing.
     public static void proceed(String[] args) {
+
+
+        // it might be better to make the number of arguments exact. Now I can specify as many arguments as I want > 4.
+
 
         // Check if valid or help requested
         if (args.length < 4 || args[0].matches("([-/]?)[hH]elp")) {
@@ -35,9 +42,13 @@ public class InputHandler {
             return;
         }
 
+        // why using regular expressions? maybe simple string comparisons with ignorance of the case sensitivity would be better.
+
         // Fill map
         for (int i = 0; i < args.length; i++) {
             if (args[i].matches("([/-]?)json\\z") || args[i].matches("([/-]?)j\\z")) {
+                // why are you catching RuntimeExceptions? RuntimeExceptions should not be caught.
+                // this could be rewritten with simple if statements based on the args length.
                 try {
                     input.put("json", args[++i]);
                 } catch (ArrayIndexOutOfBoundsException e) {
