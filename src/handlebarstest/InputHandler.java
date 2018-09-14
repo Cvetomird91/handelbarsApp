@@ -10,7 +10,7 @@ class InputHandler {
             "Mandatory options:\r\n" +
             "   -json(-j)      : Set the json file location\r\n" +
             "   -hbs(-h)       : set the hbs file location\r\n" +
-            "Non-mandatory options \r\n" +
+            "Non-mandatory options: \r\n" +
             "   -output(-o)    : sets the output file(default is output.txt in the same folder as the hbs file)\r\n";
     private final FilesHandler filesHandler = new FilesHandler();
     private final Map<String, String> input = new HashMap<>();
@@ -21,7 +21,7 @@ class InputHandler {
 
 
         // Check if valid or help requested
-        if (args[0].matches("([-/]?)[hH]elp") || args.length < 4 || args.length > 6 || args.length % 2 == 1) {
+        if (args.length < 4 || args[0].matches("([-/]?)[hH]elp") || args.length > 6 || args.length % 2 == 1) {
             System.out.println(helpMessage);
             System.exit(0);
         }
