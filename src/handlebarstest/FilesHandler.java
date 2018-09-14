@@ -9,21 +9,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public class FilesHandler {
+class FilesHandler {
 
-    private static String json, hbs;
-    private static Path outputPath;
+    private final Map<String, String> readFiles = new HashMap<>();
+    private final Map<String, String> writableFiles = new HashMap<>();
+    private Charset charset = StandardCharsets.UTF_8;
 
-    private static Charset charset = StandardCharsets.UTF_8;
-
-    private static boolean checkPathReadingValidity(String toCheck) {
+    private boolean checkPathReadingValidity(String toCheck) {
         Path path = Paths.get(toCheck);
 
         return Files.exists(path) && Files.isReadable(path) && Files.isRegularFile(path);
     }
 
-    private static String fileToString(String toRead) {
+    private String fileToString(String toRead) {
         try {
             byte[] fileBytes = Files.readAllBytes(Paths.get(toRead));
             return new String(fileBytes, charset);
@@ -32,56 +33,56 @@ public class FilesHandler {
         }
     }
 
-    public static void setEncoding(Charset charset) {
-        FilesHandler.charset = charset;
-    }
-
-    public static boolean handleJsonFile(String path) {
+    boolean handleReadableFile(String id, String path) {
         if (!checkPathReadingValidity(path)) return false;
-        json = fileToString(path);
-
-        return !(json == null || json.isEmpty());
+        String content = fileToString(path);
+        if (!content.isEmpty()) {
+            readFiles.put(id, content);
+            return true;
+        } else return false;
     }
 
-    public static boolean handleHbsFile(String path) {
-        if (!checkPathReadingValidity(path)) return false;
-        hbs = fileToString(path);
-
-        return !(hbs == null || hbs.isEmpty());
-    }
-
-    public static boolean handleOutputFile(String path) {
-
-        FilesHandler.outputPath = Paths.get(path);
+    boolean handleWritableFile(String id, String path) {
+        Path path1 = Paths.get(path);
 
         try {
-            if (Files.exists(outputPath)) {
+            if (Files.exists(path1)) {
                 new PrintWriter(new File(path)).close();
             } else {
-                Files.createFile(outputPath);
+                Files.createFile(path1);
             }
         } catch (IOException e) {
             return false;
         }
 
-        return Files.isWritable(outputPath) && Files.isRegularFile(outputPath);
+        if (Files.isWritable(path1) && Files.isRegularFile(path1)) {
+            writableFiles.put(id, path);
+            return true;
+        } else return false;
     }
 
-    public static boolean appendToOutputFile(String toAppend) {
+    boolean appendToWritableFile(String id, String toAppend) {
+        Path path = Paths.get(writableFiles.get(id));
+
         try {
-            Files.write(outputPath, Collections.singleton(toAppend), charset);
+            Files.write(path, Collections.singleton(toAppend), charset);
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public static String getJson() {
-        return json;
+    String getReadFile(String id) {
+        return readFiles.get(id);
     }
 
-    public static String getHbs() {
-        return hbs;
+    String getWritableFile(String id) {
+        return writableFiles.get(id);
+    }
+
+    void cleanUp() {
+        writableFiles.clear();
+        readFiles.clear();
     }
 
 }

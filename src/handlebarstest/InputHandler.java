@@ -1,102 +1,87 @@
 package handlebarstest;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class InputHandler {
+class InputHandler {
 
-    // isn't this one big constant... why is necessary to overcomplicate this?
-    public static final List<String> helpMessageList = Arrays.asList(
-            "Usage:",
-            "   -hbs && -json are required", // probably move this in another section, mandatory options or similar.
-            "Merges and compiles an hbs and json files into a new one", // this should be the first message
-            "Options:",
-            "   -json(-j)      : Set the working directory", // why -json(-j) is used for directory. error in the description?
-            "   -hbs(-h)       : set the name for both .hbs & .json files", // if it's used for both of the files then change the option's name. I guess this is an old description - it should be updated.
-            "   -output(-o)    : sets the output file(default is output.txt)"
-    );
-    public static final String helpMessage;
-    private static Map<String, String> input = new HashMap<>();
+    private static final String helpMessage = "Usage:\r\n" +
+            "Merges and compiles an hbs and json files into a new one\r\n" +
+            "Mandatory options:\r\n" +
+            "   -json(-j)      : Set the json file location\r\n" +
+            "   -hbs(-h)       : set the hbs file location\r\n" +
+            "Non-mandatory options \r\n" +
+            "   -output(-o)    : sets the output file(default is output.txt in the same folder as the hbs file)\r\n";
+    private final FilesHandler filesHandler = new FilesHandler();
+    private final Map<String, String> input = new HashMap<>();
 
-    static {
-        helpMessage = String.join(System.lineSeparator(), helpMessageList);
-    }
-
-    public static String get(String key) {
-        return input.get(key);
-    }
-
-
-    // this method is doing too much work. in the ideal case a method should be doing only 1 thing.
-    public static void proceed(String[] args) {
-
-
+    InputHandler(String[] args) {
         // it might be better to make the number of arguments exact. Now I can specify as many arguments as I want > 4.
+        // 2 arguments are mandatory and 1 is optional so the number can vary between 4 and 6, but I have limited it to only those two options
 
 
         // Check if valid or help requested
-        if (args.length < 4 || args[0].matches("([-/]?)[hH]elp")) {
-            input.put("help", getHelpMessage());
-            return;
+        if (args[0].matches("([-/]?)[hH]elp") || args.length < 4 || args.length > 6 || args.length % 2 == 1) {
+            System.out.println(helpMessage);
+            System.exit(0);
         }
 
-        // why using regular expressions? maybe simple string comparisons with ignorance of the case sensitivity would be better.
+        fillInputMapFromArgs(args);
 
-        // Fill map
+        nullifyIfInvalid();
+
+        generateOutputFileIfNotPresent();
+
+        handleFiles();
+    }
+
+    private void fillInputMapFromArgs(String args[]) {
+        // why using regular expressions? maybe simple string comparisons with ignorance of the case sensitivity would be better.
+        // The regular expressions don't apply to case sensitivity, I want arguments to accept both "/" and "-" calls
         for (int i = 0; i < args.length; i++) {
             if (args[i].matches("([/-]?)json\\z") || args[i].matches("([/-]?)j\\z")) {
-                // why are you catching RuntimeExceptions? RuntimeExceptions should not be caught.
-                // this could be rewritten with simple if statements based on the args length.
-                try {
-                    input.put("json", args[++i]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("No argument follows json option");
-                }
+                input.put("json", args[++i]);
             } else if (args[i].matches("([/-]?)hbs\\z") || args[i].matches("([/-]?)h\\z")) {
-                try {
-                    input.put("hbs", args[++i]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("No argument follows hbs option");
-                }
+                input.put("hbs", args[++i]);
             } else if (args[i].matches("([/-]?)output\\z") || args[i].matches("([/-]?)o\\z")) {
-                try {
-                    input.put("output", args[++i]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.err.println("No argument follows output option");
-                }
+                input.put("output", args[++i]);
             }
         }
+    }
 
-        // Check for requested fields
+    private void nullifyIfInvalid() {
         boolean valid = input.containsKey("json") && input.containsKey("hbs");
-
-        // Nullify if invalid
         if (!valid) {
             input.clear();
-            input.put("help", getHelpMessage());
+            System.out.println(helpMessage);
+            System.exit(0);
         }
+    }
 
-        // Generate output file if not present
+    private void generateOutputFileIfNotPresent() {
         if (!input.containsKey("output")) {
             String filePath = input.get("hbs");
             int lastIndex = filePath.lastIndexOf("/");
             input.put("output", filePath.substring(0, lastIndex + 1) + "output.txt");
         }
-
     }
 
-    public static Map<String, String> getInput() {
-        return input;
+    private void handleFiles() {
+        for (String id : new String[]{"json", "hbs"}) //Readable files
+            if (!filesHandler.handleReadableFile(id, input.get(id))) {
+                System.err.println("Invalid " + id + " file: " + input.get(id));
+                Runtime.getRuntime().exit(-1);
+            }
+
+        //Writaable files
+        if (!filesHandler.handleWritableFile("output", input.get("output"))) {
+            System.err.println("Invalid json file: " + input.get("output"));
+            Runtime.getRuntime().exit(-1);
+        }
     }
 
-    public static boolean requestingHelp() {
-        return input.containsKey("help");
-    }
-
-    public static String getHelpMessage() {
-        return helpMessage;
+    FilesHandler getFilesHandler() {
+        return filesHandler;
     }
 
 }
