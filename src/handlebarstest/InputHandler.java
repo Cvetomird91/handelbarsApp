@@ -15,16 +15,24 @@ class InputHandler {
     private final FilesHandler filesHandler = new FilesHandler();
     private final Map<String, String> input = new HashMap<>();
 
+
+    // this is the constructor. The constructor has only 1 purpose - establish the invariants for further operations.
+    // read this for more information if you want - https://en.wikipedia.org/wiki/Class_invariant ; https://en.wikipedia.org/wiki/Design_by_contract
     InputHandler(String[] args) {
         // it might be better to make the number of arguments exact. Now I can specify as many arguments as I want > 4.
         // 2 arguments are mandatory and 1 is optional so the number can vary between 4 and 6, but I have limited it to only those two options
 
 
         // Check if valid or help requested
+
+        // this should be in a different method called checkArgsSize or similar (if we assume that the 'help' check is removed/moved).
+
         if (args.length < 4 || args[0].matches("([-/]?)[hH]elp") || args.length > 6 || args.length % 2 == 1) {
             System.out.println(helpMessage);
             System.exit(0);
         }
+
+        // these methods below should be moved in a different method, not in the constructor.
 
         fillInputMapFromArgs(args);
 
@@ -58,6 +66,8 @@ class InputHandler {
         }
     }
 
+
+    // this name is kind of misleading - you aren't generating the outputFile, do you? rather the absolute path of the default output.txt file
     private void generateOutputFileIfNotPresent() {
         if (!input.containsKey("output")) {
             String filePath = input.get("hbs");
@@ -65,6 +75,10 @@ class InputHandler {
             input.put("output", filePath.substring(0, lastIndex + 1) + "output.txt");
         }
     }
+
+    // why is the input handler doing work that initially has to be done by the FilesHandler? My intuition is that
+    // the InputHandler has to check the number of arguments, the mandatory/not mandatory ones and only this. The other
+    // checks have to be done in the other code files.
 
     private void handleFiles() {
         for (String id : new String[]{"json", "hbs"}) //Readable files
