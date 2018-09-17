@@ -1,9 +1,9 @@
-package handlebarstest;
+package handlebarsapp;
 
 import java.util.HashMap;
 import java.util.Map;
 
-class InputHandler {
+public class InputHandler {
 
     private static final String helpMessage = "Usage:\r\n" +
             "Merges and compiles an hbs and json files into a new one\r\n" +
@@ -16,11 +16,11 @@ class InputHandler {
 
     private final String[] args;
 
-    InputHandler(String[] args) {
+    public InputHandler(String[] args) {
         this.args = args;
     }
 
-    void processArgs() {
+    public void processArgs() {
         checkArgsLength();
 
         checkRequestingHelp();
@@ -74,12 +74,12 @@ class InputHandler {
     private void generateOutputFilePathIfNotPresent() {
         if (!input.containsKey("output")) {
             String filePath = input.get("hbs");
-            int lastIndex = filePath.lastIndexOf("/");
+            int lastIndex = filePath.lastIndexOf("\\");
             input.put("output", filePath.substring(0, lastIndex + 1) + "output.txt");
         }
     }
 
-    Map<String, String> getParsedInputMap() {
+    public Map<String, String> getParsedInputMap() {
         return input;
     }
 

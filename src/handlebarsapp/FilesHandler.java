@@ -1,4 +1,4 @@
-package handlebarstest;
+package handlebarsapp;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class FilesHandler {
+public class FilesHandler {
 
     private final Map<String, String> readFiles = new HashMap<>();
     private final Map<String, String> writableFiles = new HashMap<>();
@@ -25,7 +25,7 @@ class FilesHandler {
                 Runtime.getRuntime().exit(-1);
             }
 
-        //Writaable files
+        //Writable files
         if (!handleWritableFile("output", parsedInputMap.get("output"))) {
             System.err.println("Invalid json file: " + parsedInputMap.get("output"));
             Runtime.getRuntime().exit(-1);
@@ -47,7 +47,7 @@ class FilesHandler {
         }
     }
 
-    private boolean handleReadableFile(String id, String path) {
+    public boolean handleReadableFile(String id, String path) {
         if (!checkPathReadingValidity(path)) return false;
         String content = fileToString(path);
         if (!content.isEmpty()) {
@@ -56,7 +56,7 @@ class FilesHandler {
         } else return false;
     }
 
-    private boolean handleWritableFile(String id, String path) {
+    public boolean handleWritableFile(String id, String path) {
         Path path1 = Paths.get(path);
 
         try {
@@ -75,7 +75,7 @@ class FilesHandler {
         } else return false;
     }
 
-    boolean appendToWritableFile(String id, String toAppend) {
+    public boolean appendToWritableFile(String id, String toAppend) {
         Path path = Paths.get(writableFiles.get(id));
 
         try {
@@ -86,7 +86,7 @@ class FilesHandler {
         }
     }
 
-    String getReadFile(String id) {
+    public String getReadFile(String id) {
         return readFiles.get(id);
     }
 
@@ -94,7 +94,7 @@ class FilesHandler {
         return writableFiles.get(id);
     }
 
-    void cleanUp() {
+    public void cleanUp() {
         writableFiles.clear();
         readFiles.clear();
     }

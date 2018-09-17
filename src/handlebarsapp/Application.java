@@ -1,4 +1,4 @@
-package handlebarstest;
+package handlebarsapp;
 
 public class Application {
 

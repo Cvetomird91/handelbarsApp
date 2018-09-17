@@ -1,4 +1,4 @@
-package handlebarstest;
+package handlebarsapp;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -13,9 +13,9 @@ import com.github.jknack.handlebars.context.MethodValueResolver;
 
 import java.io.IOException;
 
-class HandlebarsUtility {
+public class HandlebarsUtility {
 
-    static String compile(String json, String hbs) {
+    public static String compile(String json, String hbs) {
         Handlebars handlebars = new Handlebars();
         handlebars.registerHelper("json", Jackson2Helper.INSTANCE);
 
