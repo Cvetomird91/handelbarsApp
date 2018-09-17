@@ -79,7 +79,7 @@ class InputHandler {
         }
     }
 
-    Map<String, String> getInput() {
+    Map<String, String> getParsedInputMap() {
         return input;
     }
 

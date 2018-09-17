@@ -18,18 +18,16 @@ class FilesHandler {
     private final Map<String, String> writableFiles = new HashMap<>();
     private Charset charset = StandardCharsets.UTF_8;
 
-    void handleFilesFromInput(InputHandler inputHandler) {
-        Map<String, String> input = inputHandler.getInput();
-
+    void handleFilesFromInput(Map<String, String> parsedInputMap) {
         for (String id : new String[]{"json", "hbs"}) //Readable files
-            if (!handleReadableFile(id, input.get(id))) {
-                System.err.println("Invalid " + id + " file: " + input.get(id));
+            if (!handleReadableFile(id, parsedInputMap.get(id))) {
+                System.err.println("Invalid " + id + " file: " + parsedInputMap.get(id));
                 Runtime.getRuntime().exit(-1);
             }
 
         //Writaable files
-        if (!handleWritableFile("output", input.get("output"))) {
-            System.err.println("Invalid json file: " + input.get("output"));
+        if (!handleWritableFile("output", parsedInputMap.get("output"))) {
+            System.err.println("Invalid json file: " + parsedInputMap.get("output"));
             Runtime.getRuntime().exit(-1);
         }
     }

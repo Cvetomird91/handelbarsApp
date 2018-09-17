@@ -6,8 +6,8 @@ public class Application {
 
         InputHandler inputHandler = new InputHandler(args);
         inputHandler.processArgs();
-        FilesHandler filesHandler = inputHandler.getFilesHandler();
-        filesHandler.handleFilesFromInput(inputHandler);
+        FilesHandler filesHandler = new FilesHandler();
+        filesHandler.handleFilesFromInput(inputHandler.getParsedInputMap());
 
         String json = filesHandler.getReadFile("json");
         String hbs = filesHandler.getReadFile("hbs");
