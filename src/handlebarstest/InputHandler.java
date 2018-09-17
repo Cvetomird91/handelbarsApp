@@ -12,7 +12,6 @@ class InputHandler {
             "   -hbs(-h)       : set the hbs file location\r\n" +
             "Non-mandatory options: \r\n" +
             "   -output(-o)    : sets the output file(default is output.txt in the same folder as the hbs file)\r\n";
-    private final FilesHandler filesHandler = new FilesHandler();
     private final Map<String, String> input = new HashMap<>();
 
     private final String[] args;
@@ -82,10 +81,6 @@ class InputHandler {
 
     Map<String, String> getInput() {
         return input;
-    }
-
-    FilesHandler getFilesHandler() {
-        return filesHandler;
     }
 
 }
