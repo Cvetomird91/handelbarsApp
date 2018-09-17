@@ -18,6 +18,22 @@ class FilesHandler {
     private final Map<String, String> writableFiles = new HashMap<>();
     private Charset charset = StandardCharsets.UTF_8;
 
+    void handleFilesFromInput(InputHandler inputHandler) {
+        Map<String, String> input = inputHandler.getInput();
+
+        for (String id : new String[]{"json", "hbs"}) //Readable files
+            if (!handleReadableFile(id, input.get(id))) {
+                System.err.println("Invalid " + id + " file: " + input.get(id));
+                Runtime.getRuntime().exit(-1);
+            }
+
+        //Writaable files
+        if (!handleWritableFile("output", input.get("output"))) {
+            System.err.println("Invalid json file: " + input.get("output"));
+            Runtime.getRuntime().exit(-1);
+        }
+    }
+
     private boolean checkPathReadingValidity(String toCheck) {
         Path path = Paths.get(toCheck);
 
@@ -33,7 +49,7 @@ class FilesHandler {
         }
     }
 
-    boolean handleReadableFile(String id, String path) {
+    private boolean handleReadableFile(String id, String path) {
         if (!checkPathReadingValidity(path)) return false;
         String content = fileToString(path);
         if (!content.isEmpty()) {
@@ -42,7 +58,7 @@ class FilesHandler {
         } else return false;
     }
 
-    boolean handleWritableFile(String id, String path) {
+    private boolean handleWritableFile(String id, String path) {
         Path path1 = Paths.get(path);
 
         try {

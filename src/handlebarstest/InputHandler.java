@@ -15,35 +15,41 @@ class InputHandler {
     private final FilesHandler filesHandler = new FilesHandler();
     private final Map<String, String> input = new HashMap<>();
 
+    private final String[] args;
 
-    // this is the constructor. The constructor has only 1 purpose - establish the invariants for further operations.
-    // read this for more information if you want - https://en.wikipedia.org/wiki/Class_invariant ; https://en.wikipedia.org/wiki/Design_by_contract
     InputHandler(String[] args) {
-        // it might be better to make the number of arguments exact. Now I can specify as many arguments as I want > 4.
-        // 2 arguments are mandatory and 1 is optional so the number can vary between 4 and 6, but I have limited it to only those two options
+        this.args = args;
+    }
 
+    void processArgs() {
+        checkArgsLength();
 
-        // Check if valid or help requested
+        checkRequestingHelp();
 
-        // this should be in a different method called checkArgsSize or similar (if we assume that the 'help' check is removed/moved).
-
-        if (args.length < 4 || args[0].matches("([-/]?)[hH]elp") || args.length > 6 || args.length % 2 == 1) {
-            System.out.println(helpMessage);
-            System.exit(0);
-        }
-
-        // these methods below should be moved in a different method, not in the constructor.
-
-        fillInputMapFromArgs(args);
+        fillInputMapFromArgs();
 
         nullifyIfInvalid();
 
-        generateOutputFileIfNotPresent();
-
-        handleFiles();
+        generateOutputFilePathIfNotPresent();
     }
 
-    private void fillInputMapFromArgs(String args[]) {
+    private void checkArgsLength() {
+        int length = args.length;
+        if (length < 4 || length > 6 || length % 2 == 1) {
+            System.out.println("Invalid number of arguments: " + length);
+            System.out.println(helpMessage);
+            System.exit(0);
+        }
+    }
+
+    private void checkRequestingHelp() {
+        if (args[0].matches("([-/]?)[hH]elp")) {
+            System.out.println(helpMessage);
+            System.exit(0);
+        }
+    }
+
+    private void fillInputMapFromArgs() {
         // why using regular expressions? maybe simple string comparisons with ignorance of the case sensitivity would be better.
         // The regular expressions don't apply to case sensitivity, I want arguments to accept both "/" and "-" calls
         for (int i = 0; i < args.length; i++) {
@@ -66,9 +72,7 @@ class InputHandler {
         }
     }
 
-
-    // this name is kind of misleading - you aren't generating the outputFile, do you? rather the absolute path of the default output.txt file
-    private void generateOutputFileIfNotPresent() {
+    private void generateOutputFilePathIfNotPresent() {
         if (!input.containsKey("output")) {
             String filePath = input.get("hbs");
             int lastIndex = filePath.lastIndexOf("/");
@@ -76,22 +80,8 @@ class InputHandler {
         }
     }
 
-    // why is the input handler doing work that initially has to be done by the FilesHandler? My intuition is that
-    // the InputHandler has to check the number of arguments, the mandatory/not mandatory ones and only this. The other
-    // checks have to be done in the other code files.
-
-    private void handleFiles() {
-        for (String id : new String[]{"json", "hbs"}) //Readable files
-            if (!filesHandler.handleReadableFile(id, input.get(id))) {
-                System.err.println("Invalid " + id + " file: " + input.get(id));
-                Runtime.getRuntime().exit(-1);
-            }
-
-        //Writaable files
-        if (!filesHandler.handleWritableFile("output", input.get("output"))) {
-            System.err.println("Invalid json file: " + input.get("output"));
-            Runtime.getRuntime().exit(-1);
-        }
+    Map<String, String> getInput() {
+        return input;
     }
 
     FilesHandler getFilesHandler() {
