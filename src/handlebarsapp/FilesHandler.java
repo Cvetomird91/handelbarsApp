@@ -18,17 +18,19 @@ public class FilesHandler {
     private final Map<String, String> writableFiles = new HashMap<>();
     private Charset charset = StandardCharsets.UTF_8;
 
-    void handleFilesFromInput(Map<String, String> parsedInputMap) {
+    private boolean invalidInput = false;
+
+    public void handleFilesFromInput(Map<String, String> parsedInputMap) {
         for (String id : new String[]{"json", "hbs"}) //Readable files
             if (!handleReadableFile(id, parsedInputMap.get(id))) {
                 System.err.println("Invalid " + id + " file: " + parsedInputMap.get(id));
-                Runtime.getRuntime().exit(-1);
+                invalidInput = true;
             }
 
         //Writable files
         if (!handleWritableFile("output", parsedInputMap.get("output"))) {
             System.err.println("Invalid json file: " + parsedInputMap.get("output"));
-            Runtime.getRuntime().exit(-1);
+            invalidInput = true;
         }
     }
 
@@ -90,13 +92,17 @@ public class FilesHandler {
         return readFiles.get(id);
     }
 
-    String getWritableFile(String id) {
+    public String getWritableFile(String id) {
         return writableFiles.get(id);
     }
 
     public void cleanUp() {
         writableFiles.clear();
         readFiles.clear();
+    }
+
+    public boolean hasInvalidInput(){
+        return invalidInput;
     }
 
 }

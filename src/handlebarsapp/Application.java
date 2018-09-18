@@ -6,8 +6,22 @@ public class Application {
 
         InputHandler inputHandler = new InputHandler(args);
         inputHandler.processArgs();
+
+        if(inputHandler.isInvalid()){
+            System.err.println(inputHandler.getErrorMessage());
+        }
+
+        if(inputHandler.isRequestingHelp()){
+            System.out.println(InputHandler.helpMessage);
+            System.exit(0);
+        }
+
         FilesHandler filesHandler = new FilesHandler();
         filesHandler.handleFilesFromInput(inputHandler.getParsedInputMap());
+
+        if(filesHandler.hasInvalidInput()){
+            System.exit(-1);
+        }
 
         String json = filesHandler.getReadFile("json");
         String hbs = filesHandler.getReadFile("hbs");

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class InputHandler {
 
-    private static final String helpMessage = "Usage:\r\n" +
+    public static final String helpMessage = "Usage:\r\n" +
             "Merges and compiles an hbs and json files into a new one\r\n" +
             "Mandatory options:\r\n" +
             "   -json(-j)      : Set the json file location\r\n" +
@@ -16,6 +16,10 @@ public class InputHandler {
 
     private final String[] args;
 
+    private boolean requestingHelp = false, invalid = false;
+
+    private String errorMessage;
+
     public InputHandler(String[] args) {
         this.args = args;
     }
@@ -25,9 +29,13 @@ public class InputHandler {
 
         checkRequestingHelp();
 
+        if(requestingHelp || invalid) return;
+
         fillInputMapFromArgs();
 
         nullifyIfInvalid();
+
+        if(invalid) return;
 
         generateOutputFilePathIfNotPresent();
     }
@@ -35,39 +43,51 @@ public class InputHandler {
     private void checkArgsLength() {
         int length = args.length;
         if (length < 4 || length > 6 || length % 2 == 1) {
-            System.out.println("Invalid number of arguments: " + length);
-            System.out.println(helpMessage);
-            System.exit(0);
+            errorMessage = "Invalid number of arguments: " + length;
+            requestingHelp = true;
+            invalid = true;
         }
     }
 
     private void checkRequestingHelp() {
-        if (args[0].matches("([-/]?)[hH]elp")) {
-            System.out.println(helpMessage);
-            System.exit(0);
+        if(args.length == 0) return;
+        if (matchesAny(args[0],"help")) {
+            requestingHelp = true;
         }
     }
 
-    private void fillInputMapFromArgs() {
+    public void fillInputMapFromArgs() {
         // why using regular expressions? maybe simple string comparisons with ignorance of the case sensitivity would be better.
         // The regular expressions don't apply to case sensitivity, I want arguments to accept both "/" and "-" calls
         for (int i = 0; i < args.length; i++) {
-            if (args[i].matches("([/-]?)json\\z") || args[i].matches("([/-]?)j\\z")) {
+            if(i >= args.length-1) break;
+
+            if (matchesAny(args[i],"json", "j")) {
                 input.put("json", args[++i]);
-            } else if (args[i].matches("([/-]?)hbs\\z") || args[i].matches("([/-]?)h\\z")) {
+            } else if (matchesAny(args[i],"hbs", "h")) {
                 input.put("hbs", args[++i]);
-            } else if (args[i].matches("([/-]?)output\\z") || args[i].matches("([/-]?)o\\z")) {
+            } else if (matchesAny(args[i], "output", "o")) {
                 input.put("output", args[++i]);
+            } else if(args[i].matches("[/-].*")){
+                errorMessage = "No such argument \"" + args[i] + '"';
             }
         }
+    }
+
+    private boolean matchesAny(String toCheck, String... conditions){
+        for(String str : conditions){
+            if(toCheck.matches("([/-]?)" + str + "\\z")) return true;
+        }
+        return false;
     }
 
     private void nullifyIfInvalid() {
         boolean valid = input.containsKey("json") && input.containsKey("hbs");
         if (!valid) {
             input.clear();
-            System.out.println(helpMessage);
-            System.exit(0);
+            errorMessage = "Invalid arguments, json or hbs file missing";
+            requestingHelp = true;
+            invalid = true;
         }
     }
 
@@ -81,6 +101,22 @@ public class InputHandler {
 
     public Map<String, String> getParsedInputMap() {
         return input;
+    }
+
+    public boolean isRequestingHelp(){
+        return requestingHelp;
+    }
+
+    public boolean isInvalid(){
+        return invalid || errorMessage != null;
+    }
+
+    private void handleError(String errorMessage){
+        this.errorMessage = errorMessage;
+    }
+
+    public String getErrorMessage(){
+        return errorMessage;
     }
 
 }
