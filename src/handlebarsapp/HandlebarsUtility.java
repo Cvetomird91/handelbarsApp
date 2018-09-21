@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jknack.handlebars.*;
 import com.github.jknack.handlebars.context.FieldValueResolver;
 import com.github.jknack.handlebars.context.JavaBeanValueResolver;
@@ -12,6 +11,7 @@ import com.github.jknack.handlebars.context.MapValueResolver;
 import com.github.jknack.handlebars.context.MethodValueResolver;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 public class HandlebarsUtility {
 
@@ -19,14 +19,21 @@ public class HandlebarsUtility {
         Handlebars handlebars = new Handlebars();
         handlebars.registerHelper("json", Jackson2Helper.INSTANCE);
 
-        return compileTemplate(handlebars, json, hbs);
+        return compileTemplate(handlebars, json, hbs, null);
     }
 
-    private static String compileTemplate(Handlebars handlebars, String json, String hbs) {
+    public static String compile(String json, String hbs, Predicate<JsonNode> predicate) {
+        Handlebars handlebars = new Handlebars();
+        handlebars.registerHelper("json", Jackson2Helper.INSTANCE);
+
+        return compileTemplate(handlebars, json, hbs, predicate);
+    }
+
+    private static String compileTemplate(Handlebars handlebars, String json, String hbs, Predicate<JsonNode> predicate) {
         try {
             Template template = handlebars.compileInline(hbs);
 
-            return applyTemplate(template, json);
+            return applyTemplate(template, json, predicate);
         } catch (HandlebarsException he) {
             HandlebarsError error = he.getError();
             return "Error | Trouble in compiling hbs file in line " + error.line + System.lineSeparator()
@@ -36,13 +43,12 @@ public class HandlebarsUtility {
         }
     }
 
-    private static String applyTemplate(Template template, String json) {
+    private static String applyTemplate(Template template, String json, Predicate<JsonNode> predicate) {
         try {
             Context context;
 
             try {
-                context = genContext(json);
-
+                context = genContext(json, predicate);
             } catch (JsonParseException parseExc) {
                 JsonLocation loc = parseExc.getLocation();
                 return "Error | Trouble in parsing the json file\r\n Json line number: " + loc.getLineNr()
@@ -59,16 +65,18 @@ public class HandlebarsUtility {
         }
     }
 
-    private static Context genContext(String json) throws IOException {
-        JsonNode jsonNode = new ObjectMapper().readValue(json, JsonNode.class);
+    private static Context genContext(String json, Predicate<JsonNode> predicate) throws IOException{
+        JsonFiltering filtering = new JsonFiltering(json);
+        if(predicate != null)
+            filtering.applyFilter(predicate);
 
-        return Context.newBuilder(jsonNode)
+        return Context.newBuilder(filtering.getNode())
                 .resolver(JsonNodeValueResolver.INSTANCE,
                         JavaBeanValueResolver.INSTANCE,
                         FieldValueResolver.INSTANCE,
                         MapValueResolver.INSTANCE,
                         MethodValueResolver.INSTANCE
-                ).build();
+                ).build().data("list", filtering.getElements());
     }
 
 }

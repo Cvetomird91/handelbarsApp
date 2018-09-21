@@ -1,8 +1,15 @@
 package handlebarstest;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import handlebarsapp.FilesHandler;
 import handlebarsapp.InputHandler;
+import handlebarsapp.JsonFiltering;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -156,5 +163,24 @@ class InputHandlerTest {
 //        assertEquals("path\\path2\\file.json", parsedInputMapShort.get("json"));
 //        assertEquals("path\\path2\\file.hbs", parsedInputMapShort.get("hbs"));
 //        assertEquals("otherpath\\otherpath2\\output.txt", parsedInputMapShort.get("output"));
+    }
+
+    @Test void jsonTest(){
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("."));
+        chooser.showOpenDialog(null);
+        File file = chooser.getSelectedFile();
+        FilesHandler filesHandler = new FilesHandler();
+        filesHandler.handleReadableFile("test", file.getPath());
+        JsonFiltering filtering = null;
+        try {
+            filtering = new JsonFiltering(filesHandler.getReadFile("test"));
+            List<JsonNode> list = filtering.applyFilter(node -> node.get("age").asInt() > 15);
+            JsonNode node = filtering.getNode();
+
+            System.out.println(filtering.getNode().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

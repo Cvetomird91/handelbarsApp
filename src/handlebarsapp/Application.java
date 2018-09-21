@@ -26,7 +26,7 @@ public class Application {
         String json = filesHandler.getReadFile("json");
         String hbs = filesHandler.getReadFile("hbs");
 
-        String output = HandlebarsUtility.compile(json, hbs);
+        String output = HandlebarsUtility.compile(json, hbs, node -> node.get("age").asInt() > 5);
 
         if (output.startsWith("Error | ")) {
             System.err.println(output);
