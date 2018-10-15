@@ -31,7 +31,6 @@ class InputHandlerTest {
         assertEquals("path\\path2\\file.json", parsedInputMap.get("json"));
         assertEquals("path\\path2\\file.hbs", parsedInputMap.get("hbs"));
         assertEquals("path\\path2\\output.txt", parsedInputMap.get("output"));
-
     }
 
     @Test void notEnoughArgs(){
@@ -165,22 +164,22 @@ class InputHandlerTest {
 //        assertEquals("otherpath\\otherpath2\\output.txt", parsedInputMapShort.get("output"));
     }
 
-    @Test void jsonTest(){
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File("."));
-        chooser.showOpenDialog(null);
-        File file = chooser.getSelectedFile();
-        FilesHandler filesHandler = new FilesHandler();
-        filesHandler.handleReadableFile("test", file.getPath());
-        JsonFiltering filtering = null;
-        try {
-            filtering = new JsonFiltering(filesHandler.getReadFile("test"));
-            List<JsonNode> list = filtering.applyFilter(node -> node.get("age").asInt() > 15);
-            JsonNode node = filtering.getNode();
-
-            System.out.println(filtering.getNode().toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Test void jsonTest(){
+//        JFileChooser chooser = new JFileChooser();
+//        chooser.setCurrentDirectory(new File("."));
+//        chooser.showOpenDialog(null);
+//        File file = chooser.getSelectedFile();
+//        FilesHandler filesHandler = new FilesHandler();
+//        filesHandler.handleReadableFile("test", file.getPath());
+//        JsonFiltering filtering = null;
+//        try {
+//            filtering = new JsonFiltering(filesHandler.getReadFile("test"));
+//            List<JsonNode> list = filtering.applyFilter(node -> node.get("age").asInt() > 15);
+//            JsonNode node = filtering.getNode();
+//
+//            System.out.println(filtering.getNode().toString());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
