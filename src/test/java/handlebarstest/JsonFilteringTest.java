@@ -32,7 +32,8 @@ public class JsonFilteringTest {
 
     @Test
     void parseFromTextTest() throws IOException {
-        byte[] fileBytes = Files.readAllBytes(Paths.get("/home/scalefocus.com/tsvetomir.denchev/handelbarsApp/src/test/java/handlebarstest/test.json"));
+
+        byte[] fileBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") +"/src/test/java/handlebarstest/test.json"));
         Charset charset = StandardCharsets.UTF_8;
         String json = new String(fileBytes, charset);
 
