@@ -123,14 +123,6 @@ class InputHandlerTest {
 
     }
 
-    @Test void runtimetest(){
-        String str = "1";
-        System.out.println("1");
-        if(str.equals("1"))
-        throw new NullPointerException();
-        System.out.println("2");
-    }
-
     @Test void fillMap(){
         String[] argsFull = new String[] {
                 "/json", "path\\path2\\file.json",

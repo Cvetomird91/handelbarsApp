@@ -68,17 +68,24 @@ public class HandlebarsUtility {
     }
 
     private static Context genContext(String json, Predicate<JsonNode> predicate) throws IOException{
-        JsonFiltering filtering = new JsonFiltering(json);
-        if(predicate != null)
-            filtering.applyFilter(predicate);
 
-        return Context.newBuilder(filtering.getNode())
+        JsonNode node = processJson(json, predicate);
+
+        return Context.newBuilder(node)
                 .resolver(JsonNodeValueResolver.INSTANCE,
                         JavaBeanValueResolver.INSTANCE,
                         FieldValueResolver.INSTANCE,
                         MapValueResolver.INSTANCE,
                         MethodValueResolver.INSTANCE
-                ).build().data("list", filtering.getElements());
+                ).build(); //.data("list", filtering.getElements());
+    }
+
+    private static JsonNode processJson(String json, Predicate<JsonNode> predicate) {
+        IJsonFiltering filtering = new JsonFiltering(json);
+        if(predicate != null)
+            filtering.applyFilter(predicate);
+
+        return filtering.getRootNode();
     }
 
 }

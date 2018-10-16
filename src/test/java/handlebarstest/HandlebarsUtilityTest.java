@@ -8,10 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class HandlebarsUtilityTest {
 
     @Test void compile(){
-        assertEquals("Zdr John na 69", HandlebarsUtility.compile(
+        String result = HandlebarsUtility.compile(
                 "{\"potrebitel\" : {\"ime\":\"John\", \"godini\" : \"69\"} }",
                 "Zdr {{potrebitel.ime}} na {{potrebitel.godini}}"
-        ));
+        );
+        String expected = "Zdr John na 69";
+        assertEquals(expected, result);
+
+        System.out.println(result);
     }
 
 }
