@@ -13,7 +13,7 @@ public class IndexServlet extends HttpServlet {
         response.setContentType("text/html");
 
         RequestDispatcher requestDispatcher;
-        requestDispatcher = request.getRequestDispatcher("/sample/index.jsp");
+        requestDispatcher = request.getRequestDispatcher("/index.jsp");
         requestDispatcher.forward(request, response);
     }
 

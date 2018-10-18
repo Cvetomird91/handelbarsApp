@@ -2,6 +2,9 @@ package handlebarstest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import handlebarsapp.InputHandler;
 import handlebarsapp.FilesHandler;
 import handlebarsapp.JsonFiltering;
@@ -46,6 +49,29 @@ public class JsonFilteringTest {
             assertTrue( node.get("age").intValue() > 0);
         }
     }
+
+//    @Test
+//    void removeElementsTest() throws IOException {
+//        //TODO: refactor in a separate method to avoid repeating
+//        byte[] fileBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") +"/src/main/resources/data.json"));
+//
+//        Charset charset = StandardCharsets.UTF_8;
+//        String json = new String(fileBytes, charset);
+//
+//        JsonFiltering filter = new JsonFiltering(json);
+//        JsonNode rootNode = filter.getRootNode().get("data");
+//        ArrayNode lst = (ArrayNode)rootNode;
+//
+//        for (int i = 0; i < lst.size(); i++) {
+//            try {
+//                if (lst.get(i) != null && lst.get(i).has("status") && !lst.get(i).get("status").textValue().equals("Received")) {
+//                    System.out.println(lst.get(i));
+//                }
+//            } catch (NullPointerException e) {
+//
+//            }
+//        }
+//    }
 
     private String getValue(JsonNode t, String k1) {
         return t.get(k1).textValue();
