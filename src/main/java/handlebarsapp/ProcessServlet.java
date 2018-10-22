@@ -1,8 +1,5 @@
 package handlebarsapp;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -20,41 +17,23 @@ public class ProcessServlet extends HttpServlet {
         String parameter = request.getParameter("type");
         PrintWriter out = response.getWriter();
 
-        byte[] fileBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") +"/webapps/handlebars/WEB-INF/classes/data.json"));
-
         Charset charset = StandardCharsets.UTF_8;
-        String json = new String(fileBytes, charset);
 
-        JsonFiltering filter = new JsonFiltering(json);
+        String json = readContentFromFile("/webapps/handlebars/WEB-INF/classes/data.json", charset);
+        String tpl = readContentFromFile("/webapps/handlebars/WEB-INF/classes/list.hbs", charset);
 
-        JsonNode rootNode = filter.getRootNode().get("data");
-
-        switch (parameter) {
-            case "received":
-                ArrayNode jsonAry = (ArrayNode)rootNode;
-
-                for (int i = 0; i < jsonAry.size(); i++) {
-                    try {
-                        if (jsonAry.get(i) != null && jsonAry.get(i).has("status") && !jsonAry.get(i).get("status").textValue().equals("Received")) {
-                            jsonAry.remove(i);
-                        }
-                    } catch (NullPointerException e) {
-
-                    }
-                }
-
-                out.println(jsonAry);
-                break;
-            case "void":
-            case "with-exceptions":
-            default:
-        }
+        String compiled = HandlebarsUtility.compile(json, tpl);
 
         try {
-
+            out.println(compiled);
         } finally {
             out.close();
         }
+    }
+
+    private static String readContentFromFile(String path, Charset charset) throws IOException {
+        byte[] rawBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + path));
+        return new String(rawBytes, charset);
     }
 
 }

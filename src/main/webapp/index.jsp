@@ -15,10 +15,10 @@
                 var type = $(this).find(':selected').get(0).value;
 
                 $.get(
-                    "<%= request.getContextPath() %>/process",
+                    "process",
                     {type: type}
                 ).done(function(data) {
-                    console.log(data);
+                    $('body').append(data);
                 });
 
             });

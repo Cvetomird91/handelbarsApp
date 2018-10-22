@@ -1,5 +1,6 @@
 package handlebarsapp;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -13,6 +14,9 @@ import com.github.jknack.handlebars.context.MapValueResolver;
 import com.github.jknack.handlebars.context.MethodValueResolver;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.function.Predicate;
 
 public class HandlebarsUtility {
@@ -77,7 +81,7 @@ public class HandlebarsUtility {
                         FieldValueResolver.INSTANCE,
                         MapValueResolver.INSTANCE,
                         MethodValueResolver.INSTANCE
-                ).build(); //.data("list", filtering.getElements());
+                ).build().data("payments", node);
     }
 
     private static JsonNode processJson(String json, Predicate<JsonNode> predicate) {
@@ -86,6 +90,11 @@ public class HandlebarsUtility {
             filtering.applyFilter(predicate);
 
         return filtering.getRootNode();
+    }
+
+    public static String readContentFromFile(String path, Charset charset) throws IOException {
+        byte[] rawBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + path));
+        return new String(rawBytes, charset);
     }
 
 }
