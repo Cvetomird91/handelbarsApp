@@ -47,7 +47,8 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>data.json</include>
+                    <include>**/*.json</include>
+                    <include>**/*.hbs</include>
                 </includes>
             </resource>
         </resources>

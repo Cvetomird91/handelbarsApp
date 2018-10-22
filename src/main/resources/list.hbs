@@ -1,0 +1,15 @@
+<span>Payments</span>
+<div>
+    {{#each payments as |payment| }}
+        <div>
+            <ul>
+                <li>Payment ID: {{ payment.paymentID }}</li>
+                <li>Created: {{ payment.created }}</li>
+                <li>Status: {{ payment.status }}</li>
+                <li>Value1: {{ payment.value1 }}</li>
+                <li>transactionID: {{ payment.transactionID }}</li>
+                <li>paymentProfileID: {{ payment.paymentProfileID }}</li>
+            </ul>
+        </div>
+    {{/each}}
+</div>
