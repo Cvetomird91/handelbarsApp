@@ -18,7 +18,7 @@
                     "process",
                     {type: type}
                 ).done(function(data) {
-                    $('body').append(data);
+                    $('.data-container').html(data);
                 });
 
             });
@@ -33,6 +33,10 @@
           <option value="void">Void transactions</option>
           <option value="with-exceptions">transactions with exceptions</option>
         </select>
+    </div>
+
+    <div class="container data-container" style="margin-top: 40px;">
+
     </div>
   </body>
 </html>
