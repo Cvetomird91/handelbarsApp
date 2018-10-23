@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public interface IJsonFiltering {
-    void applyFilter(Predicate<JsonNode> predicate) throws IOException;
+    void applyFilter(Predicate<JsonNode> predicate, String rootNodeKey) throws IOException;
 
     JsonNode getRootNode();
 

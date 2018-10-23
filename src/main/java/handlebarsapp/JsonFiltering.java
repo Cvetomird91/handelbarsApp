@@ -31,12 +31,21 @@ public class JsonFiltering implements IJsonFiltering {
      * the default implementation should not mutate the input and it
      * should store it in a member variable w/out changes
      */
-    public void applyFilter(Predicate<JsonNode> predicate) throws IOException {
-        JsonNode[] data = mapper.readValue(nodeTree.get("payments").toString(), JsonNode[].class);
+    public void applyFilter(Predicate<JsonNode> predicate, String rootNodeKey) throws IOException {
+        JsonNode[] data = new JsonNode[]{};
+        if (nodeTree.isArray()) {
+            data = mapper.readValue(nodeTree.toString(), JsonNode[].class);
+        }
+
+        if (rootNodeKey != null) {
+            data = mapper.readValue(nodeTree.get(rootNodeKey).toString(), JsonNode[].class);
+        }
+
         filteredElements = new ArrayList<JsonNode>(Arrays.asList(data));
 
-        if (predicate != null)
-            filteredElements.removeIf(predicate);
+        if (predicate != null) {
+            filteredElements.removeIf((JsonNode p) -> !predicate.test(p));
+        }
     }
 
     public Object getElements() {

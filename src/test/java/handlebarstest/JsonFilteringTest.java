@@ -50,12 +50,12 @@ public class JsonFilteringTest {
         String json = HandlebarsUtility.readContentFromFile("/src/main/resources/data.json", charset);
 
         JsonFiltering filter = new JsonFiltering(json);
-        filter.applyFilter((JsonNode p) -> p.get("status").asText() == null || !p.get("status").asText().equals("Received"));
+        filter.applyFilter((JsonNode p) -> p.get("status").asText() == null || !p.get("status").asText().equals("Received"), null);
 
         for (JsonNode node : filter.getFilteredRootNode()) {
             assertTrue(node.has("status"));
-            assertTrue( node.get("status").isTextual() );
-            assertTrue( node.get("status").asText().equals("Received"));
+            assertTrue( node.get("status").isTextual() || node.get("status").isNull());
+            assertFalse( node.get("status").asText().equals("Received"));
         }
     }
 

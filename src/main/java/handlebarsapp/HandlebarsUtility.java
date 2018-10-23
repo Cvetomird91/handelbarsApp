@@ -87,7 +87,7 @@ public class HandlebarsUtility {
     private static JsonNode processJson(String json, Predicate<JsonNode> predicate) throws IOException {
         JsonFiltering filtering = new JsonFiltering(json);
         if(predicate != null) {
-            filtering.applyFilter(predicate);
+            filtering.applyFilter(predicate, "payments");
             return filtering.getFilteredRootNode();
         }
 
