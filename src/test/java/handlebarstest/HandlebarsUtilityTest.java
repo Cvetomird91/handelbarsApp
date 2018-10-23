@@ -34,19 +34,14 @@ class HandlebarsUtilityTest {
 
         String json = HandlebarsUtility.readContentFromFile("/src/test/resources/data.json", charset);
         String tpl = HandlebarsUtility.readContentFromFile("/src/test/resources/list.hbs", charset);
-
         String[] patterns = {"Payment ID", "Created", "Status", "Value1", "transactionID", "paymentProfileID"};
 
-        String result = HandlebarsUtility.compile(
-                json, tpl
-        );
+        String result = HandlebarsUtility.compile(json, tpl);
 
         JsonFiltering filtering = new JsonFiltering(json);
-
         JsonNode root = filtering.getRootNode().get("payments");
 
         for (String s : patterns) {
-
             Pattern pattern = Pattern.compile(s, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(result);
 

@@ -84,12 +84,12 @@ public class HandlebarsUtility {
                 ).build().data("payments", node);
     }
 
-    private static JsonNode processJson(String json, Predicate<JsonNode> predicate) {
-        IJsonFiltering filtering = new JsonFiltering(json);
+    private static JsonNode processJson(String json, Predicate<JsonNode> predicate) throws IOException {
+        JsonFiltering filtering = new JsonFiltering(json);
         if(predicate != null)
             filtering.applyFilter(predicate);
 
-        return filtering.getRootNode();
+        return filtering.getFilteredRootNode();
     }
 
     public static String readContentFromFile(String path, Charset charset) throws IOException {
