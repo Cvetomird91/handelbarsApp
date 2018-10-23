@@ -2,7 +2,6 @@ package handlebarsapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,17 +13,18 @@ public class JsonFiltering implements IJsonFiltering {
 
     private JsonNode nodeTree;
     private ObjectMapper mapper = new ObjectMapper();
-    private List<JsonNode> filteredElements = new ArrayList<>();
+    private List<JsonNode> filteredElements;
 
     /*
      * parse valid JSON string into member variable
      */
-    public JsonFiltering(String json) {
+    public JsonFiltering(String json) throws IOException {
         try {
             nodeTree = mapper.readTree(json);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     /*
@@ -32,9 +32,11 @@ public class JsonFiltering implements IJsonFiltering {
      * should store it in a member variable w/out changes
      */
     public void applyFilter(Predicate<JsonNode> predicate) throws IOException {
-        JsonNode[] nodes = mapper.readValue(nodeTree.toString(), JsonNode[].class);
-        filteredElements = new ArrayList<JsonNode>(Arrays.asList(nodes));
-        filteredElements.removeIf(predicate);
+        JsonNode[] data = mapper.readValue(nodeTree.get("payments").toString(), JsonNode[].class);
+        filteredElements = new ArrayList<JsonNode>(Arrays.asList(data));
+
+        if (predicate != null)
+            filteredElements.removeIf(predicate);
     }
 
     public Object getElements() {

@@ -86,10 +86,12 @@ public class HandlebarsUtility {
 
     private static JsonNode processJson(String json, Predicate<JsonNode> predicate) throws IOException {
         JsonFiltering filtering = new JsonFiltering(json);
-        if(predicate != null)
+        if(predicate != null) {
             filtering.applyFilter(predicate);
+            return filtering.getFilteredRootNode();
+        }
 
-        return filtering.getFilteredRootNode();
+        return filtering.getRootNode();
     }
 
     public static String readContentFromFile(String path, Charset charset) throws IOException {
