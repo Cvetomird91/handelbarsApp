@@ -47,15 +47,25 @@ public class JsonFilteringTest {
     @Test
     void applyFilter() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
-        String json = HandlebarsUtility.readContentFromFile("/src/main/resources/data.json", charset);
+        String json = HandlebarsUtility.readContentFromFile("/src/test/resources/data.json", charset);
+        String jsonArray = HandlebarsUtility.readContentFromFile("/src/test/resources/array.json", charset);
 
-        JsonFiltering filter = new JsonFiltering(json);
-        filter.applyFilter((JsonNode p) -> p.get("status").asText() == null || !p.get("status").asText().equals("Received"), null);
+        JsonFiltering filter1 = new JsonFiltering(json);
+        filter1.applyFilter((JsonNode p) -> p.get("status").asText() == null || !p.get("status").asText().equals("Received"), "payments");
 
-        for (JsonNode node : filter.getFilteredRootNode()) {
+        for (JsonNode node : filter1.getFilteredRootNode()) {
             assertTrue(node.has("status"));
             assertTrue( node.get("status").isTextual() || node.get("status").isNull());
             assertFalse( node.get("status").asText().equals("Received"));
+        }
+
+        JsonFiltering filter2 = new JsonFiltering(jsonArray);
+        filter2.applyFilter((JsonNode p) -> !p.get("value1").isNull(), null);
+        System.out.println(filter2.getFilteredRootNode());
+
+        for (JsonNode node : filter2.getFilteredRootNode()) {
+            assertTrue(node.has("value1"));
+            assertFalse(node.get("value1").isNull());
         }
     }
 
