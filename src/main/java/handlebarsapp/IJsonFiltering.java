@@ -1,13 +1,16 @@
 package handlebarsapp;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Predicate;
 
 public interface IJsonFiltering {
-    void applyFilter(Predicate<JsonNode> predicate);
+    void applyFilter(Predicate<JsonNode> predicate) throws IOException;
 
     JsonNode getRootNode();
 
-    List<JsonNode> getFilteredElements();
+    List<JsonNode> getFilteredElements(String parameter);
+
+    public JsonNode getFilteredRootNode();
 }

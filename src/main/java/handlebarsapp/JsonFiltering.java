@@ -2,23 +2,24 @@ package handlebarsapp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.function.Predicate;
 
 public class JsonFiltering implements IJsonFiltering {
 
     private JsonNode nodeTree;
+    private ObjectMapper mapper = new ObjectMapper();
+    private List<JsonNode> filteredElements = new ArrayList<>();
 
     /*
      * parse valid JSON string into member variable
      */
     public JsonFiltering(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-
         try {
             nodeTree = mapper.readTree(json);
         } catch (IOException e) {
@@ -30,8 +31,10 @@ public class JsonFiltering implements IJsonFiltering {
      * the default implementation should not mutate the input and it
      * should store it in a member variable w/out changes
      */
-    public void applyFilter(Predicate<JsonNode> predicate) {
-        JsonNode nodeTree;
+    public void applyFilter(Predicate<JsonNode> predicate) throws IOException {
+        JsonNode[] nodes = mapper.readValue(nodeTree.toString(), JsonNode[].class);
+        filteredElements = new ArrayList<JsonNode>(Arrays.asList(nodes));
+        filteredElements.removeIf(predicate);
     }
 
     public Object getElements() {
@@ -46,7 +49,12 @@ public class JsonFiltering implements IJsonFiltering {
         return nodeTree.toString();
     }
 
-    public List<JsonNode> getFilteredElements() {
-        return new ArrayList<JsonNode>();
+    public List<JsonNode> getFilteredElements(String parameter) {
+        return this.filteredElements;
+    }
+
+    public JsonNode getFilteredRootNode() {
+        JsonNode node = mapper.convertValue(filteredElements, JsonNode.class);
+        return node;
     }
 }
