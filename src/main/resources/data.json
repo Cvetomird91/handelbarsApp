@@ -1,5 +1,6 @@
 {
-    "payments": [{
+    "payments": [
+      {
       "paymentID": 2065971,
       "created": "2018-10-16 22:15:59:943",
       "status": "Pending",
@@ -74,7 +75,6 @@
   {
     "paymentID": 2065962,
     "created": "2018-10-15 15:02:24:510",
-    "status": "Received",
     "value1": "voidTransaction",
     "transactionID": "60110008855",
     "paymentProfileID": "1829017730"
@@ -82,7 +82,6 @@
   {
     "paymentID": 2065961,
     "created": "2018-10-15 15:02:23:063",
-    "status": "Received",
     "value1": "authOnlyTransaction",
     "transactionID": "60110008855",
     "paymentProfileID": "1829017730"

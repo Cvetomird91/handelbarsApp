@@ -1,8 +1,10 @@
 package handlebarsapp;
 
+import java.io.IOException;
+
 public class Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         InputHandler inputHandler = new InputHandler(args);
         inputHandler.processArgs();

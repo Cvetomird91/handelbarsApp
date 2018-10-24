@@ -11,16 +11,17 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.FileHandler;
 
 public class FilesHandler {
 
     private final Map<String, String> readFiles = new HashMap<>();
     private final Map<String, String> writableFiles = new HashMap<>();
-    private Charset charset = StandardCharsets.UTF_8;
+    public static Charset charset = StandardCharsets.UTF_8;
 
     private boolean invalidInput = false;
 
-    public void handleFilesFromInput(Map<String, String> parsedInputMap) {
+    public void handleFilesFromInput(Map<String, String> parsedInputMap) throws IOException {
         for (String id : new String[]{"json", "hbs"}) //Readable files
             if (!handleReadableFile(id, parsedInputMap.get(id))) {
                 System.err.println("Invalid " + id + " file: " + parsedInputMap.get(id));
@@ -40,18 +41,18 @@ public class FilesHandler {
         return Files.exists(path) && Files.isReadable(path) && Files.isRegularFile(path);
     }
 
-    private String fileToString(String toRead) {
-        try {
-            byte[] fileBytes = Files.readAllBytes(Paths.get(toRead));
-            return new String(fileBytes, charset);
-        } catch (Exception e) {
-            return "";
-        }
+    public static String readContentFromFile(String path) throws IOException {
+        return readContentFromFile(path, charset);
     }
 
-    public boolean handleReadableFile(String id, String path) {
+    public static String readContentFromFile(String path, Charset charset) throws IOException {
+        byte[] rawBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/" + path));
+        return new String(rawBytes, charset);
+    }
+
+    public boolean handleReadableFile(String id, String path) throws IOException {
         if (!checkPathReadingValidity(path)) return false;
-        String content = fileToString(path);
+        String content = FilesHandler.readContentFromFile(path);
         if (!content.isEmpty()) {
             readFiles.put(id, content);
             return true;

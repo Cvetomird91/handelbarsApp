@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -44,7 +46,7 @@ public class JsonFiltering implements IJsonFiltering {
         filteredElements = new ArrayList<JsonNode>(Arrays.asList(data));
 
         if (predicate != null) {
-            filteredElements.removeIf((JsonNode p) -> !predicate.test(p));
+            filteredElements.removeIf(predicate.negate());
         }
     }
 
@@ -68,4 +70,5 @@ public class JsonFiltering implements IJsonFiltering {
         JsonNode node = mapper.convertValue(filteredElements, JsonNode.class);
         return node;
     }
+
 }

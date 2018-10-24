@@ -1,7 +1,7 @@
 package handlebarstest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import handlebarsapp.HandlebarsUtility;
+import handlebarsapp.FilesHandler;
 import handlebarsapp.JsonFiltering;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ public class JsonFilteringTest {
     @Test
     void parseFromTextTest() throws IOException {
 
-        byte[] fileBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") +"/src/test/java/handlebarstest/test.json"));
+        byte[] fileBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") +"/src/main/resources/test.json"));
         Charset charset = StandardCharsets.UTF_8;
         String json = new String(fileBytes, charset);
 
@@ -38,17 +38,45 @@ public class JsonFilteringTest {
         JsonNode data = filter.getRootNode().get("data");
 
         for (JsonNode node : data) {
+
             assertTrue(node.has("age"));
             assertTrue( node.get("age").isInt() );
             assertTrue( node.get("age").intValue() > 0);
+
         }
+    }
+
+    @Test
+    void testParsePayments() throws IOException {
+        Charset charset = StandardCharsets.UTF_8;
+        String json = FilesHandler.readContentFromFile("/src/main/resources/data.json");
+
+        JsonFiltering filter = new JsonFiltering(json);
+
+        filter.applyFilter((n) -> n.get("status") == null, "payments");
+        JsonNode filtered = filter.getFilteredRootNode();
+        assertTrue(filtered.size() > 0);
+        int id = filtered.get(0).get("paymentID").intValue();
+
+        filter.applyFilter((JsonNode node) -> node.has("status")
+                && node.get("status") != null, "payments");
+        JsonNode data = filter.getFilteredRootNode();
+
+        assertTrue(data.size() > 0);
+
+        for (JsonNode node :data ){
+            assertTrue(node.has("status"));
+            assertFalse(node.get("status") == null);
+            assertFalse(node.get("paymentID").intValue() == id);
+        }
+
     }
 
     @Test
     void applyFilter() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
-        String json = HandlebarsUtility.readContentFromFile("/src/test/resources/data.json", charset);
-        String jsonArray = HandlebarsUtility.readContentFromFile("/src/test/resources/array.json", charset);
+        String json = FilesHandler.readContentFromFile("/src/test/resources/data.json");
+        String jsonArray = FilesHandler.readContentFromFile("/src/test/resources/array.json");
 
         JsonFiltering filter1 = new JsonFiltering(json);
         filter1.applyFilter((JsonNode p) -> p.get("status").asText() == null || !p.get("status").asText().equals("Received"), "payments");

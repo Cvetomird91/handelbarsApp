@@ -13,11 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FilesHandlerTest {
 
     @Test
-    void fullReadAndWriteTest(){
+    void fullReadAndWriteTest() throws IOException {
         FilesHandler filesHandler = new FilesHandler();
 
-        File dir = new File(".");
-        File file = new File(dir,"temp.txt");
+        File file = new File("temp.txt");
         try {
             file.createNewFile();
         } catch (IOException e) {
@@ -39,7 +38,7 @@ class FilesHandlerTest {
         filesHandler.cleanUp();
     }
 
-    @Test void readInvalidFilesFromInputHandler(){
+    @Test void readInvalidFilesFromInputHandler() throws IOException {
         String[] args = new String[] {
                 "-j", "path\\path2\\file.json",
                 "-h", "path\\path2\\file.hbs",

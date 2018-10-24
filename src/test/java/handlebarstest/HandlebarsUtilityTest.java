@@ -1,6 +1,7 @@
 package handlebarstest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import handlebarsapp.FilesHandler;
 import handlebarsapp.HandlebarsUtility;
 import handlebarsapp.JsonFiltering;
 import org.junit.jupiter.api.Test;
@@ -32,8 +33,8 @@ class HandlebarsUtilityTest {
     void compileFromFile() throws IOException {
         Charset charset = StandardCharsets.UTF_8;
 
-        String json = HandlebarsUtility.readContentFromFile("/src/test/resources/data.json", charset);
-        String tpl = HandlebarsUtility.readContentFromFile("/src/test/resources/list.hbs", charset);
+        String json = FilesHandler.readContentFromFile("/src/test/resources/data.json");
+        String tpl = FilesHandler.readContentFromFile("/src/test/resources/list.hbs");
         String[] patterns = {"Payment ID", "Created", "Status", "Value1", "transactionID", "paymentProfileID"};
 
         String result = HandlebarsUtility.compile(json, tpl);

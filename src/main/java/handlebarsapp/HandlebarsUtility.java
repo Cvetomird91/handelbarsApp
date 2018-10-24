@@ -94,9 +94,4 @@ public class HandlebarsUtility {
         return filtering.getRootNode();
     }
 
-    public static String readContentFromFile(String path, Charset charset) throws IOException {
-        byte[] rawBytes = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + path));
-        return new String(rawBytes, charset);
-    }
-
 }
