@@ -34,13 +34,13 @@ public class ProcessServlet extends HttpServlet {
 
         switch (getParameter) {
             case "received":
-                predicate = ((JsonNode p) -> "Received".equals(p.get("status").asText()));
+                predicate = ((JsonNode p) -> p.get("status") != null && "Received".equals(p.get("status").asText()));
                 break;
             case "void":
-                predicate = ((JsonNode p) -> "voidTransaction".equals(p.get("value1").asText()));
+                predicate = ((JsonNode p) -> p.get("status") != null && "voidTransaction".equals(p.get("value1").asText()));
                 break;
             case "with-exceptions":
-                predicate = ((JsonNode p) -> p.get("status").asText().contains("Exception"));
+                predicate = ((JsonNode p) -> p.get("status") != null && p.get("status").asText().contains("Exception"));
                 break;
             default:
                 predicate = null;
